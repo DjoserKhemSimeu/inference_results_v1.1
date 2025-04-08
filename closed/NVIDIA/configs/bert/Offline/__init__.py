@@ -35,6 +35,15 @@ class OfflineCPUBaseConfig(CPUBaseConfig):
 
     max_queue_delay_usec = 100
 
+@ConfigRegistry.register(HarnessType.Custom, AccuracyTarget.k_99, PowerSetting.MaxP)
+class Quadro_RTX_6000x1(OfflineGPUBaseConfig):
+    system = System("Quadro RTX 6000", Architecture.Turing, 1)
+    enable_interleaved = True
+    use_small_tile_gemm_plugin = False
+    gpu_batch_size = 8
+    gpu_copy_streams = 1
+    gpu_inference_streams = 1
+    offline_expected_qps = 923
 
 @ConfigRegistry.register(HarnessType.Custom, AccuracyTarget.k_99, PowerSetting.MaxP)
 class A100_PCIe_80GBx1(OfflineGPUBaseConfig):

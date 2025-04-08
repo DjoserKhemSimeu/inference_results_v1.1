@@ -15,7 +15,7 @@
 SHELL := /bin/bash
 MAKEFILE_NAME := $(lastword $(MAKEFILE_LIST))
 
-ARCH := $(shell uname -p)
+ARCH := $(shell uname -m)
 UNAME := $(shell whoami)
 UID := $(shell id -u `whoami`)
 HOSTNAME := $(shell hostname)

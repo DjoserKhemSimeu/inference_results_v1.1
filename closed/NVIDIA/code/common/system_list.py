@@ -313,7 +313,7 @@ class KnownSystems(object):
     """
     Global List of supported systems
     """
-
+    Quadro_RTX_6000 =SystemClass("Quadro RTX 6000", ["Quadro RTX 6000"], ["1E78"], Architecture.Turing, [1, 2])
     A100_PCIe_40GB = SystemClass("A100-PCIe", ["A100-PCIE-40GB"], ["20F1", "20BF"], Architecture.Ampere, [1, 2, 8])
     A100_PCIe_40GB_aarch64 = SystemClass("A100-PCIe", ["A100-PCIE-40GB"], ["20F1", "20BF"], Architecture.Ampere, [1, 2, 4], cpu_arch=CPUArch.aarch64)
     A100_PCIe_80GB = SystemClass("A100-PCIe-80GB", ["A100-PCIE-80GB"], ["20B5"], Architecture.Ampere, [1, 2, 8])
