@@ -12,7 +12,39 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+#############################################################
+#############################################################
+export EXT_PATH=/tmp/tensorrt-bindings
+rm -rf $EXT_PATH
+mkdir $EXT_PATH
+cd $EXT_PATH
 
+git clone https://github.com/pybind/pybind11.git
+cd pybind11
+git checkout v2.6.2
+cd $EXT_PATH
+
+wget https://www.python.org/ftp/python/3.8.13/Python-3.8.13.tgz
+tar xvzf Python-3.8.13.tgz
+mkdir python3.8
+cp -r Python-3.8.13/Include/ python3.8/include
+cp /usr/include/aarch64-linux-gnu/python3.8/pyconfig.h python3.8/include/
+
+git clone https://github.com/NVIDIA/TensorRT
+cd TensorRT
+git checkout release/8.0
+cd python
+CPATH=$EXT_PATH/pybind11/include TRT_OSSPATH=$EXT_PATH/TensorRT \
+PYTHON_MAJOR_VERSION=3 PYTHON_MINOR_VERSION=8 TARGET=aarch64 \
+./build.sh # load onnx https://github.com/onnx/onnx-tensorrt/blob/release/8.4-GA/NvOnnxParser.h
+
+python3 -m pip uninstall tensorrt -y
+python3 -m pip install build/dist/tensorrt-*.whl
+cd $EXT_PATH
+
+python3 -c "import tensorrt"
+#############################################################
+#############################################################
 sudo apt install -y python3.8 python3.8-dev \
  && sudo rm -rf /usr/bin/python3 \
  && sudo ln -s /usr/bin/python3.8 /usr/bin/python3 \
@@ -64,11 +96,11 @@ export LIBRARY_PATH=$CUDA_ROOT/lib64:$LIBRARY_PATH
 export LD_LIBRARY_PATH=$CUDA_ROOT/lib64:$LD_LIBRARY_PATH
 sudo python3 -m pip install --upgrade setuptools wheel virtualenv \
  && sudo python3 -m pip install Cython==0.29.23 \
- && sudo python3 -m pip install numpy==1.18.5 \
+ && sudo python3 -m pip install numpy==1.20.0 \
  && sudo rm -rf /usr/lib/python3/dist-packages/yaml /usr/lib/python3/dist-packages/PyYAML* \
  && sudo python3 -m pip install -r scripts/requirements_xavier.txt \
  && sudo python3 -m pip install scipy==1.6.3 \
- && sudo python3 -m pip install matplotlib==3.4.2 pycocotools==2.0.2 scikit-learn==0.22.1 \
+ && sudo python3 -m pip install matplotlib==3.4.2 pycocotools==2.0.2 scikit-learn==0.24.1 \
  && sudo -E python3 -m pip install pycuda==2021.1
 
 pushd /tmp
@@ -111,12 +143,16 @@ sudo rm -rf pytorch \
  && sudo rm -rf pytorch
 
 # Install TensorFlow 1.15.0
+sudo export JP_VERSION =1.15.0
+sudo pip install --extra-index-url https://developer.download.nvidia.com/compute/redist/jp/v$JP_VERSION tensorflow==$TF_VERSION+nv$NV_VERSION
+#https://docs.nvidia.com/deeplearning/frameworks/install-tf-jetson-platform/index.html
+
 # Following https://github.com/jkjung-avt/jetson_nano/blob/master/install_tensorflow-1.15.0.sh
-sudo rm -rf jetson_nano src /usr/local/bin/bazel \
- && git clone -b v1.15.0-py38-xavier https://github.com/nvpohanh/jetson_nano.git \
- && bash jetson_nano/install_bazel-0.26.1.sh \
- && bash jetson_nano/install_tensorflow-1.15.0.sh \
- && cd /tmp && sudo rm -rf jetson_nano src
+#sudo rm -rf jetson_nano src /usr/local/bin/bazel \
+# && git clone -b v1.15.0-py38-xavier https://github.com/nvpohanh/jetson_nano.git \
+# && bash jetson_nano/install_bazel-0.26.1.sh \
+# && bash jetson_nano/install_tensorflow-1.15.0.sh \
+# && cd /tmp && sudo rm -rf jetson_nano src
 
 popd
 
