@@ -298,14 +298,18 @@ def handle_run_harness(config, gpu=True, dla=True, profile=None,
         logging.info('AUDIT HARNESS: Overriding log_dir for compliance run. Set to ' + config['log_dir'])
 
     # Launch the harness
+    measure = NvidiaSmiMeasure()
     passed = True
+    measure.start()
     try:
         result = harness.run_harness()
         logging.info(f"Result: {result}")
     except Exception as _:
         traceback.print_exc(file=sys.stdout)
+        measure.stop()
         passed = False
     finally:
+        measure.stop()
         if power and power_measurements is not None:
             power_measurements.stop()
     if not passed:
@@ -753,7 +757,8 @@ def parse_main_args(custom=None):
 
 
 if __name__ == "__main__":
-    mp.set_start_method("spawn")
+    if mp.get_start_method(allow_none=True) is None:
+        mp.set_start_method("spawn")
 
     # Load System ID
     system = get_system()
