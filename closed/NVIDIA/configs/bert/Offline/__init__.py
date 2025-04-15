@@ -48,11 +48,12 @@ class Quadro_RTX_6000x1(OfflineGPUBaseConfig):
 @ConfigRegistry.register(HarnessType.Custom, AccuracyTarget.k_99, PowerSetting.MaxP)
 class A100_PCIe_80GBx1(OfflineGPUBaseConfig):
     system = System("A100-PCIe-80GB", Architecture.Ampere, 1)
-    use_small_tile_gemm_plugin = True
-    gemm_plugin_fairshare_cache_size = 120
-    gpu_batch_size = 1024
-    offline_expected_qps = 3400
-    workspace_size = 7516192768
+    enable_interleaved = True
+    use_small_tile_gemm_plugin = False
+    gpu_batch_size = 8
+    gpu_copy_streams = 1
+    gpu_inference_streams = 1
+    offline_expected_qps = 923
 
 
 @ConfigRegistry.register(HarnessType.Custom, AccuracyTarget.k_99_9, PowerSetting.MaxP)
