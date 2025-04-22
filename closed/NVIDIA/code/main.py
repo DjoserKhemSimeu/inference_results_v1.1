@@ -39,7 +39,7 @@ import traceback
 from importlib import import_module
 from multiprocessing import Process
 from typing import List
-
+from nv_measure import NvidiaSmiMeasure
 import os
 import sys
 sys.path.insert(0, os.getcwd())
