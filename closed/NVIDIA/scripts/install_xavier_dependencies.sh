@@ -13,17 +13,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #############################################################
-#############################################################
 
-#############################################################
-#############################################################
-# Script From : https://github.com/mlcommons/inference_results_v2.0/issues/2
 sudo apt install -y python3.8 python3.8-dev \
  && sudo rm -rf /usr/bin/python3 \
  && sudo ln -s /usr/bin/python3.8 /usr/bin/python3 \
  && sudo rm -rf /usr/bin/python \
  && sudo ln -s /usr/bin/python3 /usr/bin/python \
  && sudo apt -y autoremove
+# Addition install : https://github.com/mlcommons/inference_results_v2.0/issues/2
 export EXT_PATH=/tmp/tensorrt-bindings
 rm -rf $EXT_PATH
 mkdir $EXT_PATH
@@ -44,10 +41,10 @@ git clone https://github.com/NVIDIA/TensorRT
 cd TensorRT
 git checkout release/8.0
 cd python
-CPATH=$EXT_PATH/pybind11/include TRT_OSSPATH=$EXT_PATH/TensorRT \
-PYTHON_MAJOR_VERSION=3 PYTHON_MINOR_VERSION=8 TARGET=aarch64 \
 # load onnx https://github.com/onnx/onnx-tensorrt/blob/release/8.4-GA/NvOnnxParser.h To avoid the "onnx/NvOnnxParser.h: No such file or directory  #include "onnx/NvOnnxParser.h"" error
 wget -O include/onnx/NvOnnxParser.h https://raw.githubusercontent.com/onnx/onnx-tensorrt/refs/tags/release/8.4-GA/NvOnnxParser.h \
+CPATH=$EXT_PATH/pybind11/include TRT_OSSPATH=$EXT_PATH/TensorRT \
+PYTHON_MAJOR_VERSION=3 PYTHON_MINOR_VERSION=8 TARGET=aarch64 \
 ./build.sh
 
 
