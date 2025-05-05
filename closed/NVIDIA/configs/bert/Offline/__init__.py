@@ -53,7 +53,7 @@ class A100_PCIe_80GBx1(OfflineGPUBaseConfig):
     gpu_batch_size = 8
     gpu_copy_streams = 1
     gpu_inference_streams = 1
-    offline_expected_qps = 923
+    offline_expected_qps = 97
 
 
 @ConfigRegistry.register(HarnessType.Custom, AccuracyTarget.k_99_9, PowerSetting.MaxP)
