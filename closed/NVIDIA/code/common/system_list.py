@@ -326,6 +326,7 @@ class KnownSystems(object):
     GeForceRTX_3090 = SystemClass("GeForceRTX3090", ["GeForce RTX 3090", "Quadro RTX A6000", "RTX A6000"],
                                   ["2204", "2230"], Architecture.Ampere, [1])
     A10 = SystemClass("A10", ["A10"], ["2236"], Architecture.Ampere, [1, 8])
+    A5000 = SystemClass("A5000", ["A5000"], ["2231"], Architecture.Ampere, [1, 8])
     T4 = SystemClass("T4", ["Tesla T4", "T4 32GB"], ["1EB8", "1EB9"], Architecture.Turing, [1, 8, 20])
     RTX_2080_Ti =SystemClass("GeForce RTX 2080 Ti", ["GeForce RTX 2080 Ti"], ["1E04"], Architecture.Turing, [1, 4])
     AGX_Xavier = SystemClass("AGX_Xavier", ["Jetson-AGX"], [], Architecture.Xavier, [1], cpu_arch=CPUArch.aarch64)

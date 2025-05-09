@@ -1100,6 +1100,27 @@ class RTX_2080_Tix1(BenchmarkConfiguration):
     benchmark = Benchmark.BERT
 
 @ConfigRegistry.register(HarnessType.Custom, AccuracyTarget.k_99, PowerSetting.MaxP)
+class A5000x1(BenchmarkConfiguration):
+    system = System("A5000", Architecture.Ampere, 1)
+    bert_opt_seqlen = 270
+    coalesced_tensor = True
+    gpu_batch_size = 1
+    gpu_copy_streams = 1
+    gpu_inference_streams = 1
+    input_dtype = "int32"
+    input_format = "linear"
+    precision = "int8"
+    tensor_path = "${PREPROCESSED_DATA_DIR}/squad_tokenized/input_ids.npy,${PREPROCESSED_DATA_DIR}/squad_tokenized/segment_ids.npy,${PREPROCESSED_DATA_DIR}/squad_tokenized/input_mask.npy"
+    use_small_tile_gemm_plugin = False
+    single_stream_expected_latency_ns = 31000000
+    min_query_count=16
+    max_query_count=16
+    use_graphs = False
+    scenario = Scenario.SingleStream
+    benchmark = Benchmark.BERT
+
+
+@ConfigRegistry.register(HarnessType.Custom, AccuracyTarget.k_99, PowerSetting.MaxP)
 class AGX_Xavier(BenchmarkConfiguration):
     system = System("AGX_Xavier", Architecture.Xavier, 1, cpu_arch=CPUArch.aarch64)
     bert_opt_seqlen = 270
