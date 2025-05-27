@@ -1,6 +1,7 @@
 import time
 import subprocess
 import threading
+import argparse
 
 class NvidiaSmiMeasure:
     def __init__(self):
@@ -20,7 +21,7 @@ class NvidiaSmiMeasure:
             self.thread.join()
 
     def run(self):
-        with open("consommation_energie_gpu.csv", "w") as f:
+        with open("/tmp/scratch/save_data/consommation_energie_gpu.csv", "w") as f:
             f.write("timestamp,gpu_power\n")
             start_time = time.time()  # Temps de départ
             elapsed_time = 0  # Temps écoulé initialisé à 0
@@ -37,14 +38,18 @@ class NvidiaSmiMeasure:
             except Exception as e:
                 print(f"Une erreur s'est produite : {e}")
 
-# Exemple d'utilisation
-if __name__ == "__main__":
+def main():
+    parser = argparse.ArgumentParser(description='Mesurer la consommation d\'énergie GPU.')
+    parser.add_argument('command', choices=['start', 'stop'], help='Commande pour démarrer ou arrêter la mesure.')
+
+    args = parser.parse_args()
+
     measure = NvidiaSmiMeasure()
-    measure.start()
-    try:
-        # Laisser le script tourner pendant 10 secondes à titre d'exemple
-        time.sleep(10)
-    except KeyboardInterrupt:
-        pass
-    finally:
+
+    if args.command == 'start':
+        measure.start()
+    elif args.command == 'stop':
         measure.stop()
+
+if __name__ == "__main__":
+    main()

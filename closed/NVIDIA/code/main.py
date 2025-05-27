@@ -300,16 +300,16 @@ def handle_run_harness(config, gpu=True, dla=True, profile=None,
     # Launch the harness
     measure = NvidiaSmiMeasure()
     passed = True
-    measure.start()
+    #measure.start()
     try:
         result = harness.run_harness()
         logging.info(f"Result: {result}")
     except Exception as _:
         traceback.print_exc(file=sys.stdout)
-        measure.stop()
+       # measure.stop()
         passed = False
     finally:
-        measure.stop()
+        #measure.stop()
         if power and power_measurements is not None:
             power_measurements.stop()
     if not passed:

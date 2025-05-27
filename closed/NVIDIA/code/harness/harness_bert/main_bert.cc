@@ -21,11 +21,29 @@
 #include "logger.h"
 #include "test_settings.h"
 #include "loadgen.h"
-
+#include <stdlib.h>
+#include <stdio.h>
 #include "qsl.hpp"
 #include "bert_server.h"
 
 #include "cuda_profiler_api.h"
+
+void call_python_start() {
+    // Use the system function to call the Python script
+    int status = system("python3 code/nv_measure.py start");
+    if (status != 0) {
+        printf("Error calling Python script\n");
+    }
+}
+
+void call_python_stop() {
+    // Use the system function to call the Python script
+    int status = system("python3 code/nv_measure.py stop");
+    if (status != 0) {
+        printf("Error calling Python script\n");
+    }
+}
+
 
 DEFINE_string(gpu_engines, "", "Engine");
 DEFINE_string(devices, "all", "Enable comma separated numbered devices");
@@ -171,11 +189,11 @@ int main(int argc, char* argv[])
             );
 
         LOG(INFO) << "Starting running actual test.";
-
+	call_python_start();
         cudaProfilerStart();
         StartTest(bert_server.get(), qsl.get(), testSettings, logSettings);
         cudaProfilerStop();
-
+	call_python_stop();
         LOG(INFO) << "Finished running actual test.";
     }
 
