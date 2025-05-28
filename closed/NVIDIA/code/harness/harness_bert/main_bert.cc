@@ -15,32 +15,47 @@
  * limitations under the License.
  */
 
-#include "glog/logging.h"
 #include "NvInferPlugin.h"
-
+#include "gflags/gflags.h"
+#include "glog/logging.h"
+#include <dlfcn.h>
+#include "loadgen.h"
 #include "logger.h"
 #include "test_settings.h"
-#include "loadgen.h"
 #include <stdlib.h>
 #include <stdio.h>
-#include "qsl.hpp"
 #include "bert_server.h"
-
+#include "qsl.hpp"
+#include <unistd.h>
+#include <sys/wait.h>
+#include <fstream>
+#include <string>
 #include "cuda_profiler_api.h"
 
+
 void call_python_start() {
-    // Use the system function to call the Python script
-    int status = system("python3 code/nv_measure.py start");
+    // Utiliser nohup pour exécuter le script en arrière-plan
+    int status = system("nohup python3 code/nv_measure.py start &");
     if (status != 0) {
         printf("Error calling Python script\n");
     }
 }
 
 void call_python_stop() {
-    // Use the system function to call the Python script
-    int status = system("python3 code/nv_measure.py stop");
-    if (status != 0) {
-        printf("Error calling Python script\n");
+    // Lire le fichier PID pour obtenir l'ID du processus
+    std::ifstream pid_file("/tmp/nv_measure.pid");
+    std::string pid_str;
+    if (pid_file.is_open()) {
+        getline(pid_file, pid_str);
+        pid_file.close();
+
+        // Convertir le PID en entier
+        pid_t pid = std::stoi(pid_str);
+
+        // Envoyer un signal pour arrêter le processus
+        kill(pid, SIGTERM);
+    } else {
+        printf("Unable to open PID file\n");
     }
 }
 
