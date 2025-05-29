@@ -16,8 +16,8 @@ for i in {1..10}; do
     make run_harness RUN_ARGS="--benchmarks=bert --scenarios=singlestream"
 
     # Rename the output CSV file
-    mv /media/nvidia/177d5801-095d-441b-88e2-959056c30fac/scratch/save_data/consommation_energie_jetson.csv \
-       /media/nvidia/177d5801-095d-441b-88e2-959056c30fac/scratch/save_data/consommation_energie_single_orin_QC_${qc}_${i}_ci.csv
+    mv /media/nvidia/177d5801-095d-441b-88e2-959056c30fac/scratch/save_data/consommation_energie_jetson_pue.csv \
+       /media/nvidia/177d5801-095d-441b-88e2-959056c30fac/scratch/save_data/consommation_energie_single_xavier_QC_${qc}_${i}_pue.csv
 
     echo "Finished iteration $i"
 done

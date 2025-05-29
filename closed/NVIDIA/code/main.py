@@ -39,7 +39,8 @@ import traceback
 from importlib import import_module
 from multiprocessing import Process
 from typing import List
-from nv_measure import NvidiaSmiMeasure
+from jtop_measure import JtopMeasure
+
 import os
 import sys
 sys.path.insert(0, os.getcwd())
@@ -67,6 +68,19 @@ from code.common.fields import MainArgs, get_applicable_fields
 from code.common.system_list import Architecture
 from configs.configuration import ConfigRegistry
 
+
+import subprocess
+
+def run_bash_script(script_path):
+    try:
+        # Lancer le script Bash en arrière-plan
+        process = subprocess.Popen([script_path], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        print("#################################################")
+        # Afficher le PID du processus
+        print(f"Script lancé en arrière-plan avec le PID : {process.pid}")
+
+    except Exception as e:
+        print(f"Une erreur s'est produite : {e}")
 
 def launch_handle_generate_engine(*args, **kwargs):
     retries = 1
@@ -298,18 +312,22 @@ def handle_run_harness(config, gpu=True, dla=True, profile=None,
         logging.info('AUDIT HARNESS: Overriding log_dir for compliance run. Set to ' + config['log_dir'])
 
     # Launch the harness
-    measure = NvidiaSmiMeasure()
+    #measure=JtopMeasure()
     passed = True
     #measure.start()
+    script_start="/media/nvidia/177d5801-095d-441b-88e2-959056c30fac/inference_results_v1.1/closed/NVIDIA/code/script_start_tx_pue.sh"
+    script_stop="/media/nvidia/177d5801-095d-441b-88e2-959056c30fac/inference_results_v1.1/closed/NVIDIA/code/script_stop_tx_pue.sh"
+    run_bash_script(script_start)
     try:
         result = harness.run_harness()
         logging.info(f"Result: {result}")
     except Exception as _:
+        #run_bash_script(script_stop)
+
         traceback.print_exc(file=sys.stdout)
-       # measure.stop()
         passed = False
     finally:
-        #measure.stop()
+        run_bash_script(script_stop)
         if power and power_measurements is not None:
             power_measurements.stop()
     if not passed:
