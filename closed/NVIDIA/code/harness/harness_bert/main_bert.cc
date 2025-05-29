@@ -32,33 +32,35 @@
 #include <string>
 #include "cuda_profiler_api.h"
 
+#include <iostream>
+#include <unistd.h> // Pour fork et exec
+#include <sys/wait.h> // Pour waitpid
+#include <cstdlib> // Pour system
+#include <sys/types.h>
+#include <sys/stat.h>
 
-void call_python_start() {
-    // Utiliser nohup pour exécuter le script en arrière-plan
-    int status = system("nohup python3 code/nv_measure.py start &");
-    if (status != 0) {
-        printf("Error calling Python script\n");
-    }
-}
 
-void call_python_stop() {
-    // Lire le fichier PID pour obtenir l'ID du processus
-    std::ifstream pid_file("/tmp/nv_measure.pid");
-    std::string pid_str;
-    if (pid_file.is_open()) {
-        getline(pid_file, pid_str);
-        pid_file.close();
+void start_script_in_background(const char* script_path) {
+    pid_t pid = fork();
+    if (pid == -1) {
+        perror("Erreur lors de la création du processus");
+        exit(1);
+    } else if (pid == 0) {
+        // Processus enfant
+        setsid(); // Créer une nouvelle session
+        freopen("/dev/null", "r", stdin); // Rediriger stdin
+        freopen("/dev/null", "w", stdout); // Rediriger stdout
+        freopen("/dev/null", "w", stderr); // Rediriger stderr
 
-        // Convertir le PID en entier
-        pid_t pid = std::stoi(pid_str);
-
-        // Envoyer un signal pour arrêter le processus
-        kill(pid, SIGTERM);
+        execl("/bin/sh", "sh", "-c", script_path, (char *)NULL);
+        // Si execl échoue
+        perror("Erreur lors de l'exécution du script");
+        exit(1);
     } else {
-        printf("Unable to open PID file\n");
+        // Processus parent
+        printf("Script lancé en arrière-plan avec le PID : %d\n", pid);
     }
 }
-
 
 DEFINE_string(gpu_engines, "", "Engine");
 DEFINE_string(devices, "all", "Enable comma separated numbered devices");
@@ -204,11 +206,11 @@ int main(int argc, char* argv[])
             );
 
         LOG(INFO) << "Starting running actual test.";
-	call_python_start();
+	start_script_in_background("/tmp/inference_results_v1.1/closed/NVIDIA/code/script_start_tx.sh &");
         cudaProfilerStart();
         StartTest(bert_server.get(), qsl.get(), testSettings, logSettings);
         cudaProfilerStop();
-	call_python_stop();
+	//call_python_stop();
         LOG(INFO) << "Finished running actual test.";
     }
 
