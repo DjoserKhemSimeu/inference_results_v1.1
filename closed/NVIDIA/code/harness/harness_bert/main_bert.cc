@@ -206,7 +206,7 @@ int main(int argc, char* argv[])
             );
 
         LOG(INFO) << "Starting running actual test.";
-	start_script_in_background("/tmp/inference_results_v1.1/closed/NVIDIA/code/script_start_tx.sh &");
+	start_script_in_background("/work/code/script_start_tx.sh &");
         cudaProfilerStart();
         StartTest(bert_server.get(), qsl.get(), testSettings, logSettings);
         cudaProfilerStop();

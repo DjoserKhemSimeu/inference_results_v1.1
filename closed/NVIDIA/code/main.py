@@ -313,10 +313,10 @@ def handle_run_harness(config, gpu=True, dla=True, profile=None,
 
     # Launch the harness
     #measure = NvidiaSmiMeasure()
-    script_start="/tmp/inference_results_v1.1/closed/NVIDIA/code/script_start_tx.sh"
-    script_stop="/tmp/inference_results_v1.1/closed/NVIDIA/code/script_stop_tx.sh"
+    script_start="/work/code/script_start_tx.sh"
+    script_stop="/work/code/script_stop_tx.sh"
     passed = True
-    run_bash_script(script_start)
+    #run_bash_script(script_start)
     try:
         result = harness.run_harness()
         logging.info(f"Result: {result}")
